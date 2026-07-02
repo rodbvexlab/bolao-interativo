@@ -38,6 +38,11 @@ export async function PATCH(
       .single()
 
     if (error || !data) {
+      // O trigger rejeita empate em Final/3º Lugar com uma mensagem específica —
+      // repassa ela ao admin em vez de um erro genérico.
+      if (error?.message.includes('não pode ser empate')) {
+        return NextResponse.json({ error: error.message }, { status: 400 })
+      }
       return NextResponse.json(
         { error: 'Erro ao salvar resultado (partida pode já estar encerrada).' },
         { status: 500 }
